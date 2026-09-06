@@ -26,7 +26,7 @@ jobs:
     name: Host unit tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       - name: Configure
         run: cmake -S tests -B build-host -DCMAKE_BUILD_TYPE=Debug
@@ -41,9 +41,9 @@ jobs:
     name: clang-format
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: '3.12'
 
@@ -66,7 +66,7 @@ jobs:
     steps:
       # Checkout runs on the runner rather than inside the container so that submodule
       # fetching is guaranteed to work; the build itself is what needs devkitARM.
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           submodules: recursive
 
@@ -88,7 +88,7 @@ jobs:
         run: python3 tools/verify_rom.py "$ROM_FILE" --title "$ROM_TITLE" --code "$ROM_CODE"
 
       - name: Upload ROM
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: gba_game-rom-${{ github.sha }}
           path: ${{ env.ROM_FILE }}
