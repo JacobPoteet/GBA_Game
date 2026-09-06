@@ -88,7 +88,7 @@ jobs:
         run: python3 tools/verify_rom.py "$ROM_FILE" --title "$ROM_TITLE" --code "$ROM_CODE"
 
       - name: Upload ROM
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: gba_game-rom-${{ github.sha }}
           path: ${{ env.ROM_FILE }}
