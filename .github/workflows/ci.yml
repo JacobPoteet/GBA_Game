@@ -26,7 +26,7 @@ jobs:
     name: Host unit tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       - name: Configure
         run: cmake -S tests -B build-host -DCMAKE_BUILD_TYPE=Debug
@@ -41,7 +41,7 @@ jobs:
     name: clang-format
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       - uses: actions/setup-python@v5
         with:
@@ -66,7 +66,7 @@ jobs:
     steps:
       # Checkout runs on the runner rather than inside the container so that submodule
       # fetching is guaranteed to work; the build itself is what needs devkitARM.
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           submodules: recursive
 
