@@ -1,0 +1,4 @@
+[submodule "third_party/butano"]
+	path = third_party/butano
+	url = https://github.com/GValiente/butano.git
+	shallow = true

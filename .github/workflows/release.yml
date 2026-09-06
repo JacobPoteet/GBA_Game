@@ -1,0 +1,43 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+env:
+  DEVKITARM_IMAGE: devkitpro/devkitarm:latest
+  ROM_FILE: gba_game.gba
+  ROM_TITLE: GBA PUZZLE
+  ROM_CODE: PZLE
+
+jobs:
+  release:
+    name: Build and publish ROM
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          submodules: recursive
+
+      - name: Build ROM
+        run: |
+          docker run --rm -v "$PWD":/work -w /work "$DEVKITARM_IMAGE" \
+            bash -c 'make -j"$(nproc)"'
+
+      - name: Verify ROM header
+        run: python3 tools/verify_rom.py "$ROM_FILE" --title "$ROM_TITLE" --code "$ROM_CODE"
+
+      - name: Name the ROM after the tag
+        run: cp "$ROM_FILE" "gba_game-${GITHUB_REF_NAME}.gba"
+
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            --title "$GITHUB_REF_NAME" \
+            --generate-notes \
+            "gba_game-${GITHUB_REF_NAME}.gba"

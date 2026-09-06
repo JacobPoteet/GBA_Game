@@ -1,0 +1,95 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  # Pinned in one place so the ROM job and the verifier cannot drift from the Makefile.
+  DEVKITARM_IMAGE: devkitpro/devkitarm:latest
+  ROM_FILE: gba_game.gba
+  ROM_TITLE: GBA PUZZLE
+  ROM_CODE: PZLE
+
+jobs:
+  tests:
+    name: Host unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Configure
+        run: cmake -S tests -B build-host -DCMAKE_BUILD_TYPE=Debug
+
+      - name: Build
+        run: cmake --build build-host --parallel
+
+      - name: Run tests
+        run: ctest --test-dir build-host --output-on-failure
+
+  format:
+    name: clang-format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # Pinned: clang-format's output changes between major versions, so an unpinned
+      # formatter turns into a CI failure nobody asked for.
+      - name: Install clang-format
+        run: pip install clang-format==20.1.7
+
+      - name: Check formatting
+        run: |
+          clang-format --version
+          files=$(git ls-files 'src/*.cpp' 'include/*.h' 'tests/*.cpp' 'tests/*.h')
+          echo "checking:"
+          echo "$files" | sed 's/^/  /'
+          clang-format --dry-run --Werror $files
+
+  rom:
+    name: Build ROM
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout runs on the runner rather than inside the container so that submodule
+      # fetching is guaranteed to work; the build itself is what needs devkitARM.
+      - uses: actions/checkout@v5
+        with:
+          submodules: recursive
+
+      - name: Toolchain versions
+        run: |
+          docker run --rm "$DEVKITARM_IMAGE" bash -c '
+            arm-none-eabi-g++ --version | head -1
+            python3 --version
+            for tool in grit mmutil gbafix; do
+              printf "%-8s %s\n" "$tool" "$(command -v "$tool" || echo MISSING)"
+            done'
+
+      - name: Build ROM
+        run: |
+          docker run --rm -v "$PWD":/work -w /work "$DEVKITARM_IMAGE" \
+            bash -c 'make -j"$(nproc)"'
+
+      - name: Verify ROM header
+        run: python3 tools/verify_rom.py "$ROM_FILE" --title "$ROM_TITLE" --code "$ROM_CODE"
+
+      - name: Upload ROM
+        uses: actions/upload-artifact@v4
+        with:
+          name: gba_game-rom-${{ github.sha }}
+          path: ${{ env.ROM_FILE }}
+          if-no-files-found: error

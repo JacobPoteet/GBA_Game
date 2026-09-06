@@ -1,0 +1,24 @@
+# ---- Butano / devkitARM build output ----
+build/
+*.gba
+*.elf
+*.sav
+*.map
+bn_ofiles.txt
+
+# ---- Host unit-test build output ----
+build-host/
+cmake-build-*/
+
+# ---- Tooling ----
+compile_commands.json
+.cache/
+*.o
+*.d
+
+# ---- Editors / OS ----
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
