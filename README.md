@@ -4,9 +4,15 @@ A 2D puzzle game for the Game Boy Advance.
 
 [![CI](https://github.com/JacobPoteet/GBA_Game/actions/workflows/ci.yml/badge.svg)](https://github.com/JacobPoteet/GBA_Game/actions/workflows/ci.yml)
 
-> **Status: project skeleton.** The toolchain, project layout and CI/CD pipeline are in place and
-> produce a bootable ROM. There are no puzzle rules yet — what runs today is a title screen and a
-> grid you can move a cursor around, which exists to prove the whole pipeline works end to end.
+> **Status: the game runs, with no picture yet.** The whole simulation lives in `src/` with no
+> Butano in it, and the host tests play it: walking, connecting, matching, mismatching, chases and
+> level completion. Levels are authored in Tiled and CI fails the build if one cannot be finished.
+> Five levels, title through to ending, with sprites, a camera, music and audible chirps. The art
+> and the story text are placeholders with the right shape.
+
+Working title **Chirp**. You are looking for the person who matches you, and you cannot find them
+until you have paired off everyone else. The design, the decision log and the roadmap live in the
+project wiki.
 
 ## Tech stack
 
@@ -23,13 +29,13 @@ A 2D puzzle game for the Game Boy Advance.
 
 ```
 .github/workflows/   CI (build + test + format) and tagged releases
-docs/                Architecture and day-to-day development notes
+maps/                Five Tiled .tmx levels plus the placeholder tileset
 graphics/            Sprite sheets: 4bpp .bmp plus a .json descriptor per asset
-audio/               Maxmod modules and samples (empty for now)
+audio/               One base chirp sample per clan, plus the theme module
 include/             Headers, all prefixed gp_
 src/                 Implementation, all prefixed gp_ (except main.cpp)
-tests/               Host unit tests and their CMake project
-tools/               verify_rom.py (ROM header check), gen_placeholder_art.py
+tests/               Host unit tests, the level solver, and their CMake project
+tools/               gp_import_maps.py (Tiled to C++), art and audio generators, verify_rom.py
 third_party/butano/  Butano, pinned as a git submodule
 Makefile             Builds gba_game.gba
 ```
@@ -76,12 +82,15 @@ cmake -S tests -B build-host && cmake --build build-host && ctest --test-dir bui
 
 ## Controls
 
-| Button | Action |
-| --- | --- |
-| D-pad | Move the cursor |
-| A | Cycle the tile under the cursor |
-| START | Shuffle the board (title screen: start) |
-| B | Back to the title screen |
+The rule is **A commits, B costs nothing**. Every irreversible act is A; B is only ever information
+or movement. D-pad walks: tapping a direction turns you, holding it walks.
+
+| Situation | A | B (tap) | B (hold) |
+| --- | --- | --- | --- |
+| Facing a stranger, empty-handed | Connect | They chirp | Run |
+| Facing a stranger, follower in tow | Attempt match | They chirp | Run |
+| Turned around, facing your follower | Release them | Follower chirps | Run |
+| Nothing in front of you | — | — | Run |
 
 ## CI/CD
 
@@ -90,7 +99,7 @@ Every push and pull request runs three jobs in parallel:
 * **Build ROM** — compiles inside `devkitpro/devkitarm`, then runs `tools/verify_rom.py` to check
   the cartridge header (entry branch, Nintendo logo, title, game code, complement checksum). A ROM
   that builds but would not boot fails the build. The `.gba` is uploaded as an artifact.
-* **Host unit tests** — CMake + CTest over the engine-free game logic.
+* **Host unit tests** — CMake + CTest over the engine-free simulation.
 * **clang-format** — formatting is enforced, not suggested.
 
 Pushing a `v*` tag builds the ROM again, verifies it, and publishes it to a GitHub Release:

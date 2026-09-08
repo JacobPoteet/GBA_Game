@@ -6,11 +6,16 @@ build/
 *.map
 bn_ofiles.txt
 
+# Generated from maps/*.tmx by tools/gp_import_maps.py, on every build of either build system.
+generated/
+
 # ---- Host unit-test build output ----
 build-host/
 cmake-build-*/
 
 # ---- Tooling ----
+__pycache__/
+*.pyc
 compile_commands.json
 .cache/
 *.o

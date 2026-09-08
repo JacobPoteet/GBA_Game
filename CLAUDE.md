@@ -4,8 +4,17 @@ Guidance for Claude Code working in this repository.
 
 ## What this is
 
-A 2D puzzle game for the Game Boy Advance, built with **Butano** (C++20) on **devkitARM**.
-Currently a skeleton: the pipeline produces a bootable ROM, but there are no puzzle rules yet.
+A 2D top-down puzzle game for the Game Boy Advance, built with **Butano** (C++20) on
+**devkitARM**. Working title *Chirp*: you pair strangers off by matching what they look like
+against what they sound like, and you cannot find your own match until everyone else has theirs.
+
+The rules all live in `gp::level_state` and are covered by host tests. Levels come from `maps/*.tmx`
+through `tools/gp_import_maps.py`. Sprites, sound and a camera are not written yet.
+
+**Documentation lives in the wiki, not here.** The design, the architecture, the roadmap and the
+decision log are all notes there. This repo keeps `README.md` and this file and nothing else that
+would duplicate one. Check the wiki before writing a doc, and update the note covering whatever you
+changed in the same pass.
 
 ## Build and test
 
@@ -29,14 +38,27 @@ These will bite silently if ignored:
   reason. Keep the prefix on new files.
 * **Files that include any `bn_` header cannot be unit tested.** Keep puzzle logic free of Butano
   so `tests/` can compile it on the host. This split is the point of the architecture — see
-  `docs/architecture.md`.
+  the wiki's *The Pure Split*.
 * **Graphics must be 4bpp BMPs with a 16-colour palette and a 40-byte BITMAPINFOHEADER.** Butano's
   `bmp.py` rejects V4/V5 headers, which is what most image editors emit by default. Every `.bmp`
-  in `graphics/` needs a matching `.json`. Regenerate placeholders with
-  `python tools/gen_placeholder_art.py`.
-* **Frame order in `graphics/gp_tile.bmp` must match `gp::tile_kind`.** The mapping lives in
-  `tile_kind_graphics_index()` and in `TILE_COLORS` in the art generator. A test covers the round
-  trip, but the art side is not checked automatically.
+  in `graphics/` needs a matching `.json`. Regenerate the placeholders with
+  `python tools/gp_gen_art.py`; audio comes from `gp_gen_chirps.py` and `gp_gen_music.py`.
+* **`gp::level_state` never draws and never plays a sound.** It queues a `level_event` and the
+  scene drains the queue. Calling into Butano from it would make the whole simulation untestable.
+* **The solver lives in `tests/`, not `src/`.** Butano globs `src/*.cpp` into the ROM, and the game
+  has no use for it at runtime.
+* **`generated/` is build output, never edited or committed.** `tools/gp_import_maps.py` writes it
+  from `maps/*.tmx`, driven by `EXTTOOL` for the ROM and by a custom command for the host tests.
+  Edit the `.tmx` in Tiled instead.
+* **The last level has to sort last.** Levels are imported in filename order, and the tests key on
+  the final one holding the single character who matches `gp::player_signature`. Inserting a level
+  means renaming, not appending.
+* **Character frame order in `graphics/gp_character.bmp` is `clan * 2 + role`.** The mapping is
+  `gp::signature_graphics_index()` and the layout is in `tools/gp_gen_art.py`. A test covers the
+  C++ side; the art side is not checked automatically.
+* **Tiled layers must use CSV encoding.** The importer refuses base64, and the message says so.
+  A map needs a `collision` tile layer, an `entities` object layer with one object named `player`,
+  and named polylines on `zones` for flee routes.
 * **Butano is a pinned submodule** at `third_party/butano`. Do not edit anything inside it.
   Clones need `--recurse-submodules`.
 
@@ -49,7 +71,7 @@ types. Run `clang-format -i` before committing; CI fails on formatting.
 ## Adding things
 
 * **Source file** — drop it in `src/`, prefix `gp_`, no build file edit needed. If it is
-  Butano-free, add it to `tests/CMakeLists.txt` too.
+  Butano-free, add it to `tests/CMakeLists.txt` too, or the host tests will not cover it.
 * **Test** — new `tests/gp_*_test.cpp`, list it in `tests/CMakeLists.txt`, use `GP_TEST` /
   `GP_CHECK` / `GP_CHECK_EQ`. Tests self-register.
 * **Scene** — subclass `gp::scene`, add a `gp::scene_type` enumerator, wire it into `create_scene`
