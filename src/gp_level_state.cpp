@@ -15,8 +15,8 @@ const level_event invalid_event{};
 } // namespace
 
 level_state::level_state(const level_spec& spec)
-    : _terrain(spec.columns, spec.rows, spec.collision_bits, spec.collision_byte_count),
-      _player_position(spec.player_start)
+        : _terrain(spec.columns, spec.rows, spec.collision_bits, spec.collision_byte_count),
+          _player_position(spec.player_start)
 {
     if (spec.characters)
     {
