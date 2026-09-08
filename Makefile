@@ -19,8 +19,8 @@ endif
 TARGET      	:=  gba_game
 BUILD       	:=  build
 LIBBUTANO   	:=  third_party/butano/butano
-SOURCES     	:=  src
-INCLUDES    	:=  include third_party/butano/common/include
+SOURCES     	:=  src generated/src
+INCLUDES    	:=  include generated/include third_party/butano/common/include
 DATA        	:=
 GRAPHICS    	:=  graphics third_party/butano/common/graphics
 AUDIO       	:=  audio
@@ -38,8 +38,8 @@ USERLIBDIRS 	:=
 USERLIBS    	:=
 DEFAULTLIBS 	:=
 STACKTRACE  	:=
-USERBUILD   	:=
-EXTTOOL     	:=
+USERBUILD   	:=  generated
+EXTTOOL     	:=  @$(PYTHON) -B tools/gp_import_maps.py --maps maps --include include --out $(USERBUILD)
 
 #---------------------------------------------------------------------------------------------------------------------
 # Export absolute butano path:

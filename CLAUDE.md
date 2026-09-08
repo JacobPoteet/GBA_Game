@@ -8,8 +8,8 @@ A 2D top-down puzzle game for the Game Boy Advance, built with **Butano** (C++20
 **devkitARM**. Working title *Chirp*: you pair strangers off by matching what they look like
 against what they sound like, and you cannot find your own match until everyone else has theirs.
 
-The rules all live in `gp::level_state` and are covered by host tests. Sprites, sound and a camera
-are not written yet.
+The rules all live in `gp::level_state` and are covered by host tests. Levels come from `maps/*.tmx`
+through `tools/gp_import_maps.py`. Sprites, sound and a camera are not written yet.
 
 **Documentation lives in the wiki, not here.** The design, the architecture, the roadmap and the
 decision log are all notes there. This repo keeps `README.md` and this file and nothing else that
@@ -46,6 +46,12 @@ These will bite silently if ignored:
   scene drains the queue. Calling into Butano from it would make the whole simulation untestable.
 * **The solver lives in `tests/`, not `src/`.** Butano globs `src/*.cpp` into the ROM, and the game
   has no use for it at runtime.
+* **`generated/` is build output, never edited or committed.** `tools/gp_import_maps.py` writes it
+  from `maps/*.tmx`, driven by `EXTTOOL` for the ROM and by a custom command for the host tests.
+  Edit the `.tmx` in Tiled instead.
+* **Tiled layers must use CSV encoding.** The importer refuses base64, and the message says so.
+  A map needs a `collision` tile layer, an `entities` object layer with one object named `player`,
+  and named polylines on `zones` for flee routes.
 * **Butano is a pinned submodule** at `third_party/butano`. Do not edit anything inside it.
   Clones need `--recurse-submodules`.
 
