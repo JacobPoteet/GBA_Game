@@ -4,7 +4,7 @@
  */
 
 /*
- * Runs over the real maps, not fixtures. tools/gp_import_maps.py turns maps/*.tmx into
+ * Runs over the real maps, not fixtures. tools/gp_import_maps.py turns every .tmx in maps/ into
  * gp_levels_generated.cpp before this build starts, so a level that cannot be finished fails CI
  * the same way a broken function does.
  */
