@@ -13,6 +13,7 @@
 #include "bn_sprite_items_gp_player.h"
 
 #include "gp_levels_generated.h"
+#include "gp_progress.h"
 
 namespace gp
 {
@@ -82,8 +83,8 @@ void step_sprite(bn::sprite_ptr& sprite, tile_point tile, bn::fixed step)
 
 } // namespace
 
-world_scene::world_scene(bn::sprite_text_generator& text_generator, int level_index)
-        : _text_generator(text_generator), _state(level_at(level_index)), _map(_state.terrain()),
+world_scene::world_scene(bn::sprite_text_generator& text_generator, progress& run)
+        : _text_generator(text_generator), _progress(run), _state(level_at(run.level())), _map(_state.terrain()),
           _camera(bn::camera_ptr::create(world_map::tile_center(_state.player_position().x),
                                          world_map::tile_center(_state.player_position().y))),
           _player_sprite(bn::sprite_items::gp_player.create_sprite(world_map::tile_center(_state.player_position().x),
@@ -127,7 +128,13 @@ bn::optional<scene_type> world_scene::update()
 
     if (_state.complete() && bn::keypad::a_pressed())
     {
-        return scene_type::title;
+        if (_progress.on_last_level())
+        {
+            return scene_type::ending;
+        }
+
+        _progress.advance();
+        return scene_type::interstitial;
     }
 
     return bn::nullopt;
@@ -215,6 +222,15 @@ void world_scene::_drain_events()
             break;
 
         case event_kind::rejected:
+            _hud_drawn = false;
+            break;
+
+        case event_kind::player_matched:
+            if (value.character >= 0 && value.character < _character_sprites.size())
+            {
+                _character_sprites[value.character].set_visible(false);
+            }
+
             _hud_drawn = false;
             break;
 

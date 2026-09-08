@@ -19,6 +19,26 @@
 namespace
 {
 
+[[nodiscard]] bool held_for_the_player(const gp::level_spec& spec, int index)
+{
+    return gp::matches(gp::player_signature, spec.characters[index].sig);
+}
+
+[[nodiscard]] int player_match_count(const gp::level_spec& spec)
+{
+    int count = 0;
+
+    for (int index = 0; index < spec.character_count; ++index)
+    {
+        if (held_for_the_player(spec, index))
+        {
+            ++count;
+        }
+    }
+
+    return count;
+}
+
 [[nodiscard]] bool has_partner(const gp::level_spec& spec, int index)
 {
     for (int other = 0; other < spec.character_count; ++other)
@@ -48,7 +68,7 @@ GP_TEST(every_level_can_be_finished)
 
         // A failure here names a map that has to change, not a function.
         GP_CHECK(result.solvable);
-        GP_CHECK_EQ(int(result.steps.size()) * 2, spec.character_count);
+        GP_CHECK_EQ(int(result.steps.size()) * 2, spec.character_count - player_match_count(spec));
     }
 }
 
@@ -65,15 +85,31 @@ GP_TEST(every_solution_step_names_a_true_pair)
     }
 }
 
-GP_TEST(every_level_holds_an_even_number_of_characters)
+GP_TEST(every_level_holds_an_even_number_of_characters_to_pair_off)
 {
     for (int index = 0; index < gp::level_count; ++index)
     {
         const gp::level_spec& spec = gp::levels[index];
         GP_CHECK(spec.character_count > 0);
-        GP_CHECK_EQ(spec.character_count % 2, 0);
         GP_CHECK(spec.character_count <= gp::max_characters);
+
+        // The one the level holds for the player is not a puzzle piece, so they are left out.
+        GP_CHECK_EQ((spec.character_count - player_match_count(spec)) % 2, 0);
     }
+}
+
+GP_TEST(nobody_matches_the_player_until_the_last_level)
+{
+    for (int index = 0; index < gp::level_count - 1; ++index)
+    {
+        GP_CHECK_EQ(player_match_count(gp::levels[index]), 0);
+    }
+}
+
+GP_TEST(the_last_level_holds_exactly_one_person_for_the_player)
+{
+    GP_CHECK(gp::level_count >= 1);
+    GP_CHECK_EQ(player_match_count(gp::levels[gp::level_count - 1]), 1);
 }
 
 GP_TEST(nobody_in_a_level_is_left_without_a_partner)
@@ -84,6 +120,13 @@ GP_TEST(nobody_in_a_level_is_left_without_a_partner)
 
         for (int character = 0; character < spec.character_count; ++character)
         {
+            // The player's own match is answered by the player, not by anybody in the level.
+            if (held_for_the_player(spec, character))
+            {
+                GP_CHECK(!has_partner(spec, character));
+                continue;
+            }
+
             GP_CHECK(has_partner(spec, character));
         }
     }

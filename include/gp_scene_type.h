@@ -12,7 +12,9 @@ namespace gp
 enum class scene_type
 {
     title,
-    world
+    interstitial,
+    world,
+    ending
 };
 
 }

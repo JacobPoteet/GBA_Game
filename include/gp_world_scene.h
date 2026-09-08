@@ -24,6 +24,8 @@ class sprite_text_generator;
 namespace gp
 {
 
+class progress;
+
 /**
  * Everything the player can see and hear.
  *
@@ -35,7 +37,7 @@ class world_scene : public scene
 {
 
 public:
-    world_scene(bn::sprite_text_generator& text_generator, int level_index);
+    world_scene(bn::sprite_text_generator& text_generator, progress& run);
 
     [[nodiscard]] bn::optional<scene_type> update() override;
 
@@ -51,6 +53,7 @@ private:
     static constexpr int listen_frames = 12;
 
     bn::sprite_text_generator& _text_generator;
+    progress& _progress;
     level_state _state;
     world_map _map;
     chirp_player _chirps;

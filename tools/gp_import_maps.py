@@ -53,6 +53,16 @@ def read_limits(header_path):
 
         limits[name] = int(match.group(1))
 
+    signature_header = header_path.parent / "gp_signature.h"
+    signature_text = signature_header.read_text(encoding="utf-8") if signature_header.is_file() else ""
+    match = re.search(r"constexpr\s+signature\s+player_signature\s*\{\s*(\d+)\s*,\s*(\d+)\s*,"
+                      r"\s*role::(\w+)\s*\}", signature_text)
+
+    if not match:
+        raise MapError(f"{signature_header}: could not find 'constexpr signature player_signature'")
+
+    limits["player_signature"] = (int(match.group(1)), int(match.group(2)), match.group(3))
+
     grid = header_path.parent / "gp_collision_map.h"
     grid_text = grid.read_text(encoding="utf-8") if grid.is_file() else ""
 
@@ -250,8 +260,22 @@ def parse_map(path, limits):
     if len(characters) > limits["max_characters"]:
         raise MapError(f"{source}: {len(characters)} characters, the limit is {limits['max_characters']}")
 
-    if len(characters) % 2 != 0:
-        raise MapError(f"{source}: {len(characters)} characters. An odd count can never pair off")
+    # The player's own match is not a puzzle piece, so they are left out of the parity rule.
+    player_clan, player_family, player_role = limits["player_signature"]
+    player_answer = "responder" if player_role == "caller" else "caller"
+    held_for_player = [character["name"] for character in characters
+                       if character["clan"] == player_clan and character["family"] == player_family
+                       and character["role"] == player_answer]
+
+    if len(held_for_player) > 1:
+        raise MapError(f"{source}: {len(held_for_player)} characters match the player "
+                       f"({', '.join(held_for_player)}). A level holds at most one")
+
+    pairable = len(characters) - len(held_for_player)
+
+    if pairable % 2 != 0:
+        raise MapError(f"{source}: {pairable} characters to pair off. "
+                       "An odd count can never pair off")
 
     if len(order) > limits["max_routes"]:
         raise MapError(f"{source}: {len(order)} routes, the limit is {limits['max_routes']}")

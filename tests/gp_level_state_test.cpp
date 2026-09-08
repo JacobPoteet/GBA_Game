@@ -430,3 +430,119 @@ GP_TEST(an_out_of_range_character_index_reads_back_a_blank)
     GP_CHECK(state.character_at(-1).state == gp::character_state::idle);
     GP_CHECK(state.character_at(99).state == gp::character_state::idle);
 }
+
+namespace
+{
+
+/** A room holding one ordinary pair and the character the level keeps for the player. */
+gp_fixture::level_builder make_last_room()
+{
+    gp_fixture::level_builder builder = make_room(10, 6);
+    builder.add(gp::tile_point{3, 1}, 0, 0, gp::role::caller);
+    builder.add(gp::tile_point{5, 1}, 0, 0, gp::role::responder);
+    builder.add(gp::tile_point{7, 1}, gp::player_signature.clan, gp::player_signature.family,
+                gp::opposite(gp::player_signature.part));
+    return builder;
+}
+
+} // namespace
+
+GP_TEST(only_the_last_room_holds_somebody_for_the_player)
+{
+    gp_fixture::level_builder plain = make_room(8, 8);
+    plain.add(gp::tile_point{3, 1}, 0, 0, gp::role::caller);
+    plain.add(gp::tile_point{5, 1}, 0, 0, gp::role::responder);
+    gp::level_spec plain_spec = plain.spec();
+    gp::level_state plain_state(plain_spec);
+    GP_CHECK_EQ(plain_state.player_match(), gp::no_character);
+
+    gp_fixture::level_builder last = make_last_room();
+    gp::level_spec last_spec = last.spec();
+    gp::level_state last_state(last_spec);
+    GP_CHECK_EQ(last_state.player_match(), 2);
+}
+
+GP_TEST(your_own_match_waits_until_everyone_else_has_found_someone)
+{
+    gp_fixture::level_builder builder = make_last_room();
+    gp::level_spec spec = builder.spec();
+    gp::level_state state(spec);
+
+    walk(state, gp::direction::right, 5);
+    GP_CHECK(state.player_position() == (gp::tile_point{6, 1}));
+    GP_CHECK_EQ(state.facing_character(), 2);
+
+    GP_CHECK(state.interact() == gp::interact_result::waiting);
+    GP_CHECK_EQ(state.follower(), gp::no_character);
+    GP_CHECK(state.character_at(2).state == gp::character_state::idle);
+    GP_CHECK(!state.complete());
+}
+
+GP_TEST(waiting_still_lets_you_hear_them)
+{
+    gp_fixture::level_builder builder = make_last_room();
+    gp::level_spec spec = builder.spec();
+    gp::level_state state(spec);
+
+    walk(state, gp::direction::right, 5);
+    state.clear_events();
+    state.interact();
+
+    GP_CHECK_EQ(state.event_count(), 1);
+    GP_CHECK(state.event_at(0).kind == gp::event_kind::chirp);
+}
+
+GP_TEST(nobody_can_be_introduced_to_the_one_who_is_yours)
+{
+    gp_fixture::level_builder builder = make_last_room();
+    gp::level_spec spec = builder.spec();
+    gp::level_state state(spec);
+
+    walk(state, gp::direction::right, 1);
+    GP_CHECK(state.interact() == gp::interact_result::connected);
+
+    state.try_move(gp::direction::right);
+    state.try_move(gp::direction::right);
+    state.try_move(gp::direction::right);
+    state.try_move(gp::direction::right);
+    GP_CHECK(state.player_position() == (gp::tile_point{6, 1}));
+
+    GP_CHECK(state.interact() == gp::interact_result::nothing);
+    GP_CHECK_EQ(state.follower(), 0);
+    GP_CHECK(state.character_at(2).state == gp::character_state::idle);
+}
+
+GP_TEST(the_last_connection_is_the_players_own)
+{
+    gp_fixture::level_builder builder = make_last_room();
+    gp::level_spec spec = builder.spec();
+    gp::level_state state(spec);
+
+    walk(state, gp::direction::right, 1);
+    state.interact();
+    state.try_move(gp::direction::right);
+    state.try_move(gp::direction::right);
+    GP_CHECK(state.interact() == gp::interact_result::matched);
+
+    state.try_move(gp::direction::right);
+    state.try_move(gp::direction::right);
+    GP_CHECK(state.player_position() == (gp::tile_point{6, 1}));
+    GP_CHECK(!state.complete());
+
+    state.clear_events();
+    GP_CHECK(state.interact() == gp::interact_result::player_matched);
+    GP_CHECK(state.character_at(2).state == gp::character_state::departed);
+    GP_CHECK(state.complete());
+
+    bool announced = false;
+
+    for (int index = 0; index < state.event_count(); ++index)
+    {
+        if (state.event_at(index).kind == gp::event_kind::player_matched)
+        {
+            announced = true;
+        }
+    }
+
+    GP_CHECK(announced);
+}

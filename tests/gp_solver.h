@@ -23,6 +23,10 @@ struct solve_step
 struct solve_result
 {
     bool solvable = false;
+
+    /** The character the level holds for the player, or `no_character`. Only the last level has one. */
+    int player_match = no_character;
+
     std::vector<solve_step> steps;
 };
 
@@ -33,6 +37,9 @@ struct solve_result
  * when the player can stand next to both characters in the configuration that ordering produces,
  * which is what makes blocker ordering matter: some pairs stay out of reach until an earlier pair
  * leaves.
+ *
+ * The player's own match is not a pairing. They are left out of the search and checked once at the
+ * end, when everybody else has gone, because that is the only moment the player can reach them.
  *
  * This lives in `tests/` on purpose. CI runs it over every level, and the ROM never carries it.
  */

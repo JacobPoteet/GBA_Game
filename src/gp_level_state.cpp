@@ -90,6 +90,32 @@ int level_state::facing_character() const
     return no_character;
 }
 
+int level_state::player_match() const
+{
+    for (int index = 0; index < _character_count; ++index)
+    {
+        if (matches(player_signature, _characters[index].sig))
+        {
+            return index;
+        }
+    }
+
+    return no_character;
+}
+
+bool level_state::_everyone_else_departed(int except) const
+{
+    for (int index = 0; index < _character_count; ++index)
+    {
+        if (index != except && _characters[index].state != character_state::departed)
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 bool level_state::solid(tile_point point) const
 {
     if (_terrain.blocked(point))
@@ -190,6 +216,27 @@ interact_result level_state::interact()
     if (_characters[target].state != character_state::idle)
     {
         return interact_result::nothing;
+    }
+
+    // The player's own match is not a puzzle piece. Nobody can be introduced to them, they cannot
+    // be carried, and they wait until everyone else in the level has found somebody.
+    if (matches(player_signature, _characters[target].sig))
+    {
+        if (_follower != no_character)
+        {
+            return interact_result::nothing;
+        }
+
+        if (!_everyone_else_departed(target))
+        {
+            _push_event(event_kind::chirp, target, no_character);
+            return interact_result::waiting;
+        }
+
+        _characters[target].state = character_state::departed;
+        _push_event(event_kind::player_matched, target, no_character);
+        _announce_clear_once();
+        return interact_result::player_matched;
     }
 
     if (_follower == no_character)

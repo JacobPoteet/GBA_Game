@@ -23,7 +23,11 @@ LIMITS = {
     "max_route_points": 8,
     "max_columns": 32,
     "max_rows": 32,
+    "player_signature": (2, 1, "caller"),
 }
+
+# What a character has to be to match the player. Only the last level holds one.
+PLAYER_ANSWER = {"clan": 2, "family": 1, "role": "responder"}
 
 
 def build_map(columns=6, rows=5, walls=(), characters=(), routes=(), player=(1, 1),
@@ -167,6 +171,24 @@ class ImporterTest(unittest.TestCase):
             {"name": "a", "tile": (2, 2), "clan": 0, "family": 0, "role": "caller"}]),
             "can never pair off")
 
+    def test_the_players_own_match_is_left_out_of_the_parity_rule(self):
+        # Three characters: one pair, plus the one the level holds for the player.
+        level = self.parse(build_map(characters=pair((2, 2), (3, 3)) + [
+            dict(PLAYER_ANSWER, name="yours", tile=(4, 2))]))
+        self.assertEqual(len(level["characters"]), 3)
+
+    def test_two_characters_matching_the_player_are_refused(self):
+        self.refuse(build_map(characters=[
+            dict(PLAYER_ANSWER, name="one", tile=(2, 2)),
+            dict(PLAYER_ANSWER, name="two", tile=(3, 2))]),
+            "A level holds at most one")
+
+    def test_an_odd_count_alongside_the_players_match_is_refused(self):
+        self.refuse(build_map(characters=[
+            {"name": "a", "tile": (2, 2), "clan": 0, "family": 0, "role": "caller"},
+            dict(PLAYER_ANSWER, name="yours", tile=(3, 2))]),
+            "can never pair off")
+
     def test_a_character_standing_in_a_wall_is_refused(self):
         self.refuse(build_map(characters=pair((0, 2), (3, 3))), "stands inside a wall")
 
@@ -246,6 +268,7 @@ class ImporterTest(unittest.TestCase):
         self.assertEqual(limits["max_characters"], 16)
         self.assertEqual(limits["max_route_points"], 8)
         self.assertEqual(limits["max_columns"], 32)
+        self.assertEqual(limits["player_signature"], (2, 1, "caller"))
 
 
 if __name__ == "__main__":

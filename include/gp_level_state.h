@@ -51,6 +51,10 @@ enum class event_kind : uint8_t
     matched,
     rejected,
     released,
+
+    /** The player found their own. Only ever fires once, in the last level. */
+    player_matched,
+
     level_cleared
 };
 
@@ -72,7 +76,12 @@ enum class interact_result : uint8_t
     connected,
     matched,
     rejected,
-    released
+    released,
+
+    /** The player's own match is here, but everyone else still needs sorting. */
+    waiting,
+
+    player_matched
 };
 
 /**
@@ -116,6 +125,14 @@ public:
 
     /** Who stands on the tile the player faces, or `no_character`. */
     [[nodiscard]] int facing_character() const;
+
+    /**
+     * The character this level holds for the player, or `no_character`.
+     *
+     * Only the last level has one. They cannot be carried and cannot be introduced to anybody, so
+     * the only way to resolve them is to be the last thing you do.
+     */
+    [[nodiscard]] int player_match() const;
 
     /** Terrain, plus any idle blocker standing in the way. */
     [[nodiscard]] bool solid(tile_point point) const;
@@ -170,6 +187,7 @@ private:
     int _event_count = 0;
     bool _cleared_announced = false;
 
+    [[nodiscard]] bool _everyone_else_departed(int except) const;
     void _push_event(event_kind kind, int character_index, int other_index);
     void _advance_follower();
     void _announce_clear_once();

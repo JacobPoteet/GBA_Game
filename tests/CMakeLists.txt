@@ -46,6 +46,7 @@ add_executable(gp_tests
     ${CMAKE_CURRENT_SOURCE_DIR}/gp_collision_map_test.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/gp_level_state_test.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/gp_levels_test.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gp_progress_test.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/gp_signature_test.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/gp_solver_test.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/gp_trail_test.cpp
@@ -56,6 +57,7 @@ add_executable(gp_tests
     ${GAME_ROOT}/src/gp_collision_map.cpp
     ${GAME_ROOT}/src/gp_level_state.cpp
     ${GAME_ROOT}/src/gp_signature.cpp
+    ${GAME_ROOT}/src/gp_story.cpp
     ${GAME_ROOT}/src/gp_trail.cpp)
 
 target_include_directories(gp_tests PRIVATE

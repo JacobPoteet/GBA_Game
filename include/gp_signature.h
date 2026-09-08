@@ -58,6 +58,16 @@ struct signature
 }
 
 /**
+ * The player.
+ *
+ * Constant for the whole game rather than a field in the level data, because the player does not
+ * change: you are who you are, and the world is what varies. Every level up to the last contains
+ * nobody who matches this, which is the premise stated as a fact about the data rather than as a
+ * line of dialogue. `gp_levels_test.cpp` asserts it.
+ */
+constexpr signature player_signature{2, 1, role::caller};
+
+/**
  * Which frame of `graphics/gp_character.bmp` a character is drawn with.
  *
  * Frame order is `clan * 2 + role`, and `tools/gp_gen_art.py` lays the sheet out to match. Nothing
