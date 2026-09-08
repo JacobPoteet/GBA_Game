@@ -7,8 +7,8 @@ A 2D puzzle game for the Game Boy Advance.
 > **Status: the game runs, with no picture yet.** The whole simulation lives in `src/` with no
 > Butano in it, and the host tests play it: walking, connecting, matching, mismatching, chases and
 > level completion. Levels are authored in Tiled and CI fails the build if one cannot be finished.
-> Phase 3 gave it sprites, a camera, a background and audible chirps, so level 1 is playable end to
-> end. Story, progression and real art are next.
+> Five levels, title through to ending, with sprites, a camera, music and audible chirps. The art
+> and the story text are placeholders with the right shape.
 
 Working title **Chirp**. You are looking for the person who matches you, and you cannot find them
 until you have paired off everyone else. The design, the decision log and the roadmap live in the
@@ -29,9 +29,9 @@ project wiki.
 
 ```
 .github/workflows/   CI (build + test + format) and tagged releases
-maps/                Tiled .tmx levels plus the placeholder tileset
+maps/                Five Tiled .tmx levels plus the placeholder tileset
 graphics/            Sprite sheets: 4bpp .bmp plus a .json descriptor per asset
-audio/               One base chirp sample per clan, 8 bit mono
+audio/               One base chirp sample per clan, plus the theme module
 include/             Headers, all prefixed gp_
 src/                 Implementation, all prefixed gp_ (except main.cpp)
 tests/               Host unit tests, the level solver, and their CMake project
