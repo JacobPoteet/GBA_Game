@@ -434,15 +434,29 @@ GP_TEST(an_out_of_range_character_index_reads_back_a_blank)
 namespace
 {
 
-/** A room holding one ordinary pair and the character the level keeps for the player. */
+/**
+ * A room holding one ordinary pair and the character the level keeps for the player.
+ *
+ * The pair sits on row 3 and the player's own match on row 1, so the corridor along the top stays
+ * walkable. Characters are solid, so a test that walks through where one stands is testing the
+ * fixture rather than the rules.
+ */
 gp_fixture::level_builder make_last_room()
 {
     gp_fixture::level_builder builder = make_room(10, 6);
-    builder.add(gp::tile_point{3, 1}, 0, 0, gp::role::caller);
-    builder.add(gp::tile_point{5, 1}, 0, 0, gp::role::responder);
+    builder.add(gp::tile_point{3, 3}, 0, 0, gp::role::caller);
+    builder.add(gp::tile_point{5, 3}, 0, 0, gp::role::responder);
     builder.add(gp::tile_point{7, 1}, gp::player_signature.clan, gp::player_signature.family,
                 gp::opposite(gp::player_signature.part));
     return builder;
+}
+
+/** Walks down and across to face the caller, then picks them up. */
+void connect_the_caller(gp::level_state& state)
+{
+    walk(state, gp::direction::down, 2);
+    walk(state, gp::direction::right, 1);
+    state.interact();
 }
 
 } // namespace
@@ -498,14 +512,13 @@ GP_TEST(nobody_can_be_introduced_to_the_one_who_is_yours)
     gp::level_spec spec = builder.spec();
     gp::level_state state(spec);
 
-    walk(state, gp::direction::right, 1);
-    GP_CHECK(state.interact() == gp::interact_result::connected);
+    connect_the_caller(state);
+    GP_CHECK_EQ(state.follower(), 0);
 
-    state.try_move(gp::direction::right);
-    state.try_move(gp::direction::right);
-    state.try_move(gp::direction::right);
-    state.try_move(gp::direction::right);
+    walk(state, gp::direction::up, 2);
+    walk(state, gp::direction::right, 4);
     GP_CHECK(state.player_position() == (gp::tile_point{6, 1}));
+    GP_CHECK_EQ(state.facing_character(), 2);
 
     GP_CHECK(state.interact() == gp::interact_result::nothing);
     GP_CHECK_EQ(state.follower(), 0);
@@ -518,14 +531,13 @@ GP_TEST(the_last_connection_is_the_players_own)
     gp::level_spec spec = builder.spec();
     gp::level_state state(spec);
 
-    walk(state, gp::direction::right, 1);
-    state.interact();
+    connect_the_caller(state);
     state.try_move(gp::direction::right);
     state.try_move(gp::direction::right);
     GP_CHECK(state.interact() == gp::interact_result::matched);
 
-    state.try_move(gp::direction::right);
-    state.try_move(gp::direction::right);
+    walk(state, gp::direction::up, 2);
+    walk(state, gp::direction::right, 2);
     GP_CHECK(state.player_position() == (gp::tile_point{6, 1}));
     GP_CHECK(!state.complete());
 
