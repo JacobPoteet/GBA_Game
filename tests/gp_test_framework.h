@@ -9,8 +9,8 @@
 /*
  * A deliberately tiny host-side test runner.
  *
- * The GBA build cannot run a normal test framework, so the pure-logic half of the game
- * (gp::board, gp::cursor, gp::tile_kind) is compiled for the host instead and exercised here.
+ * The GBA build cannot run a normal test framework, so the pure half of the game
+ * (gp::level_state and everything under it) is compiled for the host instead and exercised here.
  * This has no third party dependencies on purpose: it keeps CI hermetic and the build instant.
  * Swap it for doctest or Catch2 if the suite ever outgrows it.
  */

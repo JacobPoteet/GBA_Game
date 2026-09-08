@@ -1,8 +1,8 @@
 # Host-side unit tests for the Butano-free half of the game.
 #
 # This does NOT build the GBA ROM - that is the top level Makefile's job. It compiles the pure
-# logic in src/gp_board.cpp and src/gp_cursor.cpp with the host compiler so the puzzle rules can
-# be tested in milliseconds without an emulator.
+# simulation in src/ with the host compiler so the rules can be tested in milliseconds without an
+# emulator or an ARM toolchain.
 #
 #   cmake -S tests -B build-host
 #   cmake --build build-host
@@ -21,10 +21,18 @@ set(GAME_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/..)
 
 add_executable(gp_tests
     ${CMAKE_CURRENT_SOURCE_DIR}/gp_tests_main.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/gp_board_test.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/gp_cursor_test.cpp
-    ${GAME_ROOT}/src/gp_board.cpp
-    ${GAME_ROOT}/src/gp_cursor.cpp)
+    ${CMAKE_CURRENT_SOURCE_DIR}/gp_collision_map_test.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gp_level_state_test.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gp_signature_test.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gp_solver_test.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gp_trail_test.cpp
+    # The solver checks that a level can be finished. CI runs it over every map; the ROM never
+    # carries it, which is why it lives here rather than in src/.
+    ${CMAKE_CURRENT_SOURCE_DIR}/gp_solver.cpp
+    ${GAME_ROOT}/src/gp_collision_map.cpp
+    ${GAME_ROOT}/src/gp_level_state.cpp
+    ${GAME_ROOT}/src/gp_signature.cpp
+    ${GAME_ROOT}/src/gp_trail.cpp)
 
 target_include_directories(gp_tests PRIVATE
     ${GAME_ROOT}/include

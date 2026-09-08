@@ -15,7 +15,6 @@
 
 #include "gp_scene.h"
 #include "gp_scene_type.h"
-#include "gp_game_scene.h"
 #include "gp_title_scene.h"
 
 namespace
@@ -27,9 +26,6 @@ namespace
 
     case gp::scene_type::title:
         return bn::unique_ptr<gp::scene>(new gp::title_scene(text_generator));
-
-    case gp::scene_type::game:
-        return bn::unique_ptr<gp::scene>(new gp::game_scene(text_generator));
     }
 
     BN_ERROR("Invalid scene type: ", int(type));
