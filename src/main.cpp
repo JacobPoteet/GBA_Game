@@ -8,6 +8,8 @@
 #include "bn_assert.h"
 #include "bn_optional.h"
 #include "bn_unique_ptr.h"
+#include "bn_music.h"
+#include "bn_music_items.h"
 #include "bn_bg_palettes.h"
 #include "bn_sprite_text_generator.h"
 
@@ -52,6 +54,10 @@ int main()
 {
     bn::core::init();
     bn::bg_palettes::set_transparent_color(bn::color(2, 2, 6));
+
+    // One loop for the whole game. Scenes come and go; the music does not, so a card between two
+    // levels does not land in silence.
+    bn::music::play(bn::music_items::gp_theme, bn::fixed(0.45));
 
     bn::sprite_text_generator text_generator(common::variable_8x16_sprite_font);
     text_generator.set_center_alignment();

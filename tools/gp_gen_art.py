@@ -110,14 +110,16 @@ def bg_tiles():
 
 def clan_pattern(clan, x, y, cx, cy):
     """Each clan wears a different marking. This is the visible half of a signature."""
+    # Four textures, not four variations on one: bands one way, bands the other way, a grid of
+    # dots, and a ring. At 16 pixels a subtle difference is no difference.
     if clan == 0:
-        return (y % 4) < 2                                    # stripes
+        return (y % 5) < 2                                    # thick horizontal bands
     if clan == 1:
-        return (x % 4 == 1) and (y % 4 == 1)                  # dots
+        return (x % 3 == 0) and (y % 3 == 0)                  # dot grid
     if clan == 2:
-        return (abs(x - cx) + abs(y - cy)) % 5 < 2            # chevrons
+        return ((x + y) % 5) < 2                              # diagonal bands
     ring = math.hypot(x - cx, y - cy)
-    return 2.6 <= ring <= 3.6                                 # ring
+    return 2.4 <= ring <= 3.4                                 # one bold ring
 
 
 def character_frame(clan, role):

@@ -16,8 +16,8 @@ namespace
  * Keep each line under about 28 characters or the 8x16 font runs off a 240 pixel screen.
  */
 constexpr story_card cards[] = {
-        {"Everyone here is looking.", "So am I."},
-        {"I am getting good at this.", "It has not helped me yet."},
+        {"Everyone here is looking.", "So am I."},       {"I am getting good at this.", "It has not helped me yet."},
+        {"They sound alike at first.", "They are not."}, {"People stand in doorways.", "They do not know it."},
         {"One more room.", "I have stopped expecting."},
 };
 

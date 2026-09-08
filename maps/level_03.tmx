@@ -1,97 +1,137 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="16" height="12" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="11">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="20" height="12" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="18">
  <tileset firstgid="1" source="chirp_tiles.tsx"/>
- <layer id="1" name="ground" width="16" height="12">
+ <layer id="1" name="ground" width="20" height="12">
   <data encoding="csv">
-1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
 </data>
  </layer>
- <layer id="2" name="collision" width="16" height="12">
+ <layer id="2" name="collision" width="20" height="12">
   <data encoding="csv">
-2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
-2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,
-2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,
-2,0,0,0,0,0,2,0,0,2,0,0,0,0,0,2,
-2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,
-2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,
-2,0,0,0,2,0,0,0,0,0,0,0,0,0,0,2,
-2,0,0,0,0,0,0,0,0,0,2,0,0,0,0,2,
-2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,
-2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,
-2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,
-2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2
+2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
+2,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,2,
+2,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,2,
+2,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,2,
+2,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,2,
+2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,
+2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,
+2,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,2,
+2,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,2,
+2,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,2,
+2,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,2,
+2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2
 </data>
  </layer>
  <objectgroup id="3" name="entities">
-  <object id="1" name="player" x="32" y="144" width="16" height="16"/>
-  <object id="2" name="yours" x="128" y="80" width="16" height="16">
+  <object id="1" name="player" x="32" y="32" width="16" height="16"/>
+  <object id="2" name="ash" x="64" y="128" width="16" height="16">
    <properties>
-    <property name="clan" type="int" value="2"/>
+    <property name="clan" type="int" value="1"/>
+    <property name="family" type="int" value="0"/>
+    <property name="role" value="caller"/>
+    <property name="is_blocker" type="bool" value="false"/>
+    <property name="flee_route" value="flee_ash"/>
+   </properties>
+  </object>
+  <object id="3" name="birch" x="256" y="48" width="16" height="16">
+   <properties>
+    <property name="clan" type="int" value="1"/>
+    <property name="family" type="int" value="0"/>
+    <property name="role" value="responder"/>
+    <property name="is_blocker" type="bool" value="false"/>
+    <property name="flee_route" value="flee_birch"/>
+   </properties>
+  </object>
+  <object id="4" name="cedar" x="160" y="32" width="16" height="16">
+   <properties>
+    <property name="clan" type="int" value="1"/>
+    <property name="family" type="int" value="1"/>
+    <property name="role" value="caller"/>
+    <property name="is_blocker" type="bool" value="false"/>
+    <property name="flee_route" value="flee_cedar"/>
+   </properties>
+  </object>
+  <object id="5" name="dew" x="80" y="80" width="16" height="16">
+   <properties>
+    <property name="clan" type="int" value="1"/>
     <property name="family" type="int" value="1"/>
     <property name="role" value="responder"/>
     <property name="is_blocker" type="bool" value="false"/>
+    <property name="flee_route" value="flee_dew"/>
    </properties>
   </object>
-  <object id="3" name="one" x="48" y="32" width="16" height="16">
+  <object id="6" name="elm" x="240" y="144" width="16" height="16">
    <properties>
-    <property name="clan" type="int" value="0"/>
+    <property name="clan" type="int" value="1"/>
     <property name="family" type="int" value="2"/>
     <property name="role" value="caller"/>
     <property name="is_blocker" type="bool" value="false"/>
-    <property name="flee_route" value="flee_one"/>
+    <property name="flee_route" value="flee_elm"/>
    </properties>
   </object>
-  <object id="4" name="two" x="192" y="32" width="16" height="16">
+  <object id="7" name="fern" x="144" y="96" width="16" height="16">
    <properties>
-    <property name="clan" type="int" value="0"/>
+    <property name="clan" type="int" value="1"/>
     <property name="family" type="int" value="2"/>
     <property name="role" value="responder"/>
     <property name="is_blocker" type="bool" value="false"/>
-    <property name="flee_route" value="flee_two"/>
+    <property name="flee_route" value="flee_fern"/>
    </properties>
   </object>
-  <object id="5" name="three" x="208" y="144" width="16" height="16">
+  <object id="8" name="gale" x="32" y="144" width="16" height="16">
    <properties>
     <property name="clan" type="int" value="3"/>
     <property name="family" type="int" value="0"/>
     <property name="role" value="caller"/>
     <property name="is_blocker" type="bool" value="false"/>
-    <property name="flee_route" value="flee_three"/>
+    <property name="flee_route" value="flee_gale"/>
    </properties>
   </object>
-  <object id="6" name="four" x="80" y="144" width="16" height="16">
+  <object id="9" name="haze" x="272" y="96" width="16" height="16">
    <properties>
     <property name="clan" type="int" value="3"/>
     <property name="family" type="int" value="0"/>
     <property name="role" value="responder"/>
     <property name="is_blocker" type="bool" value="false"/>
-    <property name="flee_route" value="flee_four"/>
+    <property name="flee_route" value="flee_haze"/>
    </properties>
   </object>
  </objectgroup>
  <objectgroup id="4" name="zones">
-  <object id="7" name="flee_one" x="48" y="32">
-   <polyline points="0,0 0,16 0,32"/>
-  </object>
-  <object id="8" name="flee_two" x="192" y="32">
-   <polyline points="0,0 0,16 0,32"/>
-  </object>
-  <object id="9" name="flee_three" x="208" y="144">
-   <polyline points="0,0 -16,0 -32,0"/>
-  </object>
-  <object id="10" name="flee_four" x="80" y="144">
+  <object id="10" name="flee_ash" x="64" y="128">
    <polyline points="0,0 16,0 32,0"/>
+  </object>
+  <object id="11" name="flee_birch" x="256" y="48">
+   <polyline points="0,0 0,16 0,32"/>
+  </object>
+  <object id="12" name="flee_cedar" x="160" y="32">
+   <polyline points="0,0 16,0 32,0"/>
+  </object>
+  <object id="13" name="flee_dew" x="80" y="80">
+   <polyline points="0,0 0,16 0,32"/>
+  </object>
+  <object id="14" name="flee_elm" x="240" y="144">
+   <polyline points="0,0 16,0 32,0"/>
+  </object>
+  <object id="15" name="flee_fern" x="144" y="96">
+   <polyline points="0,0 0,16 0,32"/>
+  </object>
+  <object id="16" name="flee_gale" x="32" y="144">
+   <polyline points="0,0 16,0 32,0"/>
+  </object>
+  <object id="17" name="flee_haze" x="272" y="96">
+   <polyline points="0,0 0,16 0,32"/>
   </object>
  </objectgroup>
 </map>
