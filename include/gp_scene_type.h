@@ -11,7 +11,8 @@ namespace gp
 
 enum class scene_type
 {
-    title
+    title,
+    world
 };
 
 }

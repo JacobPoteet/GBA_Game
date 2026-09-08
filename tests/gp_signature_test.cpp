@@ -113,3 +113,37 @@ GP_TEST(opposite_flips_the_role)
     GP_CHECK(gp::opposite(gp::role::caller) == gp::role::responder);
     GP_CHECK(gp::opposite(gp::role::responder) == gp::role::caller);
 }
+
+GP_TEST(every_signature_maps_to_a_frame_that_exists)
+{
+    for (int clan = 0; clan < gp::clan_count; ++clan)
+    {
+        for (int part = 0; part < 2; ++part)
+        {
+            int index = gp::signature_graphics_index(make(clan, 0, gp::role(part)));
+            GP_CHECK(index >= 0);
+            GP_CHECK(index < gp::character_frame_count);
+        }
+    }
+}
+
+GP_TEST(no_two_clan_and_role_pairs_share_a_frame)
+{
+    bool seen[gp::character_frame_count] = {};
+
+    for (int clan = 0; clan < gp::clan_count; ++clan)
+    {
+        for (int part = 0; part < 2; ++part)
+        {
+            int index = gp::signature_graphics_index(make(clan, 0, gp::role(part)));
+            GP_CHECK(!seen[index]);
+            seen[index] = true;
+        }
+    }
+}
+
+GP_TEST(the_family_does_not_change_the_frame)
+{
+    GP_CHECK_EQ(gp::signature_graphics_index(make(2, 0, gp::role::caller)),
+                gp::signature_graphics_index(make(2, 3, gp::role::caller)));
+}

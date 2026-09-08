@@ -57,6 +57,19 @@ struct signature
     return a.clan == b.clan && a.family == b.family && a.part != b.part;
 }
 
+/**
+ * Which frame of `graphics/gp_character.bmp` a character is drawn with.
+ *
+ * Frame order is `clan * 2 + role`, and `tools/gp_gen_art.py` lays the sheet out to match. Nothing
+ * checks the art side automatically, so the two move together by hand.
+ */
+[[nodiscard]] constexpr int signature_graphics_index(signature value)
+{
+    return (int(value.clan) * 2) + int(value.part);
+}
+
+constexpr int character_frame_count = clan_count * 2;
+
 /** Notes in one chirp. */
 constexpr int motif_length = 4;
 
