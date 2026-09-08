@@ -32,10 +32,16 @@ gp_fixture::level_builder make_room(int columns, int rows)
     return builder;
 }
 
-/** Turns to face `dir` and then walks `steps` tiles that way. */
+/**
+ * Faces `dir` and then walks exactly `steps` tiles that way.
+ *
+ * `turn` first rather than a bare `try_move`, because `try_move` only turns when the player is
+ * looking somewhere else and steps when they are already facing that way. Leaning on that here
+ * makes the distance depend on which way the player happened to be looking.
+ */
 void walk(gp::level_state& state, gp::direction dir, int steps)
 {
-    state.try_move(dir);
+    state.turn(dir);
 
     for (int step = 0; step < steps; ++step)
     {
