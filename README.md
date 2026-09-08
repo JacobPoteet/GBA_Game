@@ -7,7 +7,8 @@ A 2D puzzle game for the Game Boy Advance.
 > **Status: the game runs, with no picture yet.** The whole simulation lives in `src/` with no
 > Butano in it, and the host tests play it: walking, connecting, matching, mismatching, chases and
 > level completion. Levels are authored in Tiled and CI fails the build if one cannot be finished.
-> Sprites, sound and a camera arrive next. The ROM builds and boots to a title screen.
+> Phase 3 gave it sprites, a camera, a background and audible chirps, so level 1 is playable end to
+> end. Story, progression and real art are next.
 
 Working title **Chirp**. You are looking for the person who matches you, and you cannot find them
 until you have paired off everyone else. The design, the decision log and the roadmap live in the
@@ -30,11 +31,11 @@ project wiki.
 .github/workflows/   CI (build + test + format) and tagged releases
 maps/                Tiled .tmx levels plus the placeholder tileset
 graphics/            Sprite sheets: 4bpp .bmp plus a .json descriptor per asset
-audio/               Maxmod modules and samples (empty for now)
+audio/               One base chirp sample per clan, 8 bit mono
 include/             Headers, all prefixed gp_
 src/                 Implementation, all prefixed gp_ (except main.cpp)
 tests/               Host unit tests, the level solver, and their CMake project
-tools/               gp_import_maps.py (Tiled to C++), verify_rom.py, gp_gen_tileset.py
+tools/               gp_import_maps.py (Tiled to C++), art and audio generators, verify_rom.py
 third_party/butano/  Butano, pinned as a git submodule
 Makefile             Builds gba_game.gba
 ```
@@ -82,7 +83,7 @@ cmake -S tests -B build-host && cmake --build build-host && ctest --test-dir bui
 ## Controls
 
 The rule is **A commits, B costs nothing**. Every irreversible act is A; B is only ever information
-or movement. The simulation implements this; the buttons get wired to it in phase 3.
+or movement. D-pad walks: tapping a direction turns you, holding it walks.
 
 | Situation | A | B (tap) | B (hold) |
 | --- | --- | --- | --- |

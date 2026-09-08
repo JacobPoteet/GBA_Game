@@ -41,7 +41,8 @@ These will bite silently if ignored:
   the wiki's *The Pure Split*.
 * **Graphics must be 4bpp BMPs with a 16-colour palette and a 40-byte BITMAPINFOHEADER.** Butano's
   `bmp.py` rejects V4/V5 headers, which is what most image editors emit by default. Every `.bmp`
-  in `graphics/` needs a matching `.json`. `graphics/` is empty until phase 3.
+  in `graphics/` needs a matching `.json`. Regenerate the placeholders with
+  `python tools/gp_gen_art.py`; sound samples come from `python tools/gp_gen_chirps.py`.
 * **`gp::level_state` never draws and never plays a sound.** It queues a `level_event` and the
   scene drains the queue. Calling into Butano from it would make the whole simulation untestable.
 * **The solver lives in `tests/`, not `src/`.** Butano globs `src/*.cpp` into the ROM, and the game
@@ -49,6 +50,9 @@ These will bite silently if ignored:
 * **`generated/` is build output, never edited or committed.** `tools/gp_import_maps.py` writes it
   from `maps/*.tmx`, driven by `EXTTOOL` for the ROM and by a custom command for the host tests.
   Edit the `.tmx` in Tiled instead.
+* **Character frame order in `graphics/gp_character.bmp` is `clan * 2 + role`.** The mapping is
+  `gp::signature_graphics_index()` and the layout is in `tools/gp_gen_art.py`. A test covers the
+  C++ side; the art side is not checked automatically.
 * **Tiled layers must use CSV encoding.** The importer refuses base64, and the message says so.
   A map needs a `collision` tile layer, an `entities` object layer with one object named `player`,
   and named polylines on `zones` for flee routes.
