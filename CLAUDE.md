@@ -1,6 +1,8 @@
-# CLAUDE.md
+# GBA_Game (Chirp)
 
-Guidance for Claude Code working in this repository.
+Guidance for Claude Code working in this repository. Follows the workflow standard in the user
+CLAUDE.md: squash merges, `/ship` to land a PR, `/release` to cut one, bugs fixed when found.
+Deviations are listed at the end.
 
 ## What this is
 
@@ -11,10 +13,11 @@ against what they sound like, and you cannot find your own match until everyone 
 The rules all live in `gp::level_state` and are covered by host tests. Levels come from `maps/*.tmx`
 through `tools/gp_import_maps.py`. Sprites, sound and a camera are not written yet.
 
-**Documentation lives in the wiki, not here.** The design, the architecture, the roadmap and the
-decision log are all notes there. This repo keeps `README.md` and this file and nothing else that
-would duplicate one. Check the wiki before writing a doc, and update the note covering whatever you
-changed in the same pass.
+**Documentation lives in the wiki, not here.** The wiki is named Chirp, after the working title;
+its path is in the gitignored `.claude/wiki-path.local`. The design, the architecture, the roadmap
+and the decision log are all notes there. This repo keeps `README.md` and this file and nothing
+else that would duplicate one. Check the wiki before writing a doc. A PR names the notes it affects
+under `## Wiki notes`, and the `/release` pass writes them.
 
 ## Build and test
 
@@ -27,7 +30,7 @@ clang-format --dry-run --Werror src/*.cpp include/*.h tests/*.cpp tests/*.h
 ```
 
 `make` only works inside devkitPro's MSYS2 shell on Windows. If no ARM toolchain is available,
-work on the pure logic and let CI build the ROM — do not claim the ROM builds without evidence.
+work on the pure logic and let CI build the ROM. Do not claim the ROM builds without evidence.
 
 ## Non-obvious constraints
 
@@ -37,7 +40,7 @@ These will bite silently if ignored:
   source directory onto one `VPATH`. Everything in `src/` and `include/` is prefixed `gp_` for this
   reason. Keep the prefix on new files.
 * **Files that include any `bn_` header cannot be unit tested.** Keep puzzle logic free of Butano
-  so `tests/` can compile it on the host. This split is the point of the architecture — see
+  so `tests/` can compile it on the host. This split is the point of the architecture; see
   the wiki's *The Pure Split*.
 * **Graphics must be 4bpp BMPs with a 16-colour palette and a 40-byte BITMAPINFOHEADER.** Butano's
   `bmp.py` rejects V4/V5 headers, which is what most image editors emit by default. Every `.bmp`
@@ -70,11 +73,11 @@ types. Run `clang-format -i` before committing; CI fails on formatting.
 
 ## Adding things
 
-* **Source file** — drop it in `src/`, prefix `gp_`, no build file edit needed. If it is
+* **Source file**: drop it in `src/`, prefix `gp_`, no build file edit needed. If it is
   Butano-free, add it to `tests/CMakeLists.txt` too, or the host tests will not cover it.
-* **Test** — new `tests/gp_*_test.cpp`, list it in `tests/CMakeLists.txt`, use `GP_TEST` /
+* **Test**: new `tests/gp_*_test.cpp`, list it in `tests/CMakeLists.txt`, use `GP_TEST` /
   `GP_CHECK` / `GP_CHECK_EQ`. Tests self-register.
-* **Scene** — subclass `gp::scene`, add a `gp::scene_type` enumerator, wire it into `create_scene`
+* **Scene**: subclass `gp::scene`, add a `gp::scene_type` enumerator, wire it into `create_scene`
   in `src/main.cpp`.
 
 ## CI
@@ -83,3 +86,13 @@ types. Run `clang-format -i` before committing; CI fails on formatting.
 `devkitpro/devkitarm` container followed by `tools/verify_rom.py` header validation, host unit
 tests, and a clang-format check. Tagging `v*` triggers `release.yml`, which publishes the ROM to a
 GitHub Release.
+
+## Cutting a release
+
+Run `/release`. The version lives only in the tag: `release.yml` names the ROM after it, so there
+is no version file to bump and no release PR. Notes go on the GitHub release. After the run, check
+the release carries the `.gba`.
+
+## Deviations from the standard
+
+None.

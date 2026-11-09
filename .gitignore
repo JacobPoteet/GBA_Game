@@ -27,3 +27,6 @@ compile_commands.json
 *.swp
 .DS_Store
 Thumbs.db
+
+# Local agent config: the wiki location never enters the repo
+.claude/*.local
